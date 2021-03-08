@@ -191,12 +191,25 @@ public class Executions {
         }
     }
 
-    public void detachPlayerFromTeam() {
+    public void detachPlayerFromTeam() throws SQLException, IOException {
 
+        ResultSet rs = null;
+        Statement st = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+        Scanner readerInteger = new Scanner(System.in);
+
+        System.out.println("Insert federation licence of player");
+        String feder = br.readLine();
+        rs = st.executeQuery("SELECT * FROM player WHERE federation_license_code ='"+feder+"' LIMIT 1");
+
+        rs.updateNull("team_name");
+        rs.updateRow();
     }
 
     public void pushStats() {
     }
+
     public void exit() throws SQLException {
         System.out.println("ADÉU!");
         conn.close();
