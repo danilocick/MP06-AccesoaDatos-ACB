@@ -1,14 +1,11 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class Executions {
     Connection conn;
@@ -192,22 +189,61 @@ public class Executions {
     }
 
     public void detachPlayerFromTeam() throws SQLException, IOException {
-
         ResultSet rs = null;
         Statement st = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
-        Scanner readerInteger = new Scanner(System.in);
+        Scanner reader = new Scanner(System.in);
 
-        System.out.println("Insert federation licence of player");
-        String feder = br.readLine();
-        rs = st.executeQuery("SELECT * FROM player WHERE federation_license_code ='"+feder+"' LIMIT 1");
+        try {
+            System.out.println("Insert federation number of player");
+            int code = reader.nextInt();
+            rs = st.executeQuery("SELECT * FROM player WHERE federation_license_code='"+code+"' AND team_name IS NOT NULL");
 
-        rs.updateNull("team_name");
-        rs.updateRow();
+            if (!rs.next()) {
+                System.out.println("This player have a team");
+            } else {
+                do {
+                    System.out.println("Name: " + rs.getString("first_name"));
+
+                    System.out.println("¿Do you want to break the player with his team?(Y|N)");
+                    String resposta = br.readLine();
+
+                    if (resposta.equals("Y")) {
+                        rs.updateString("team_name", null);
+                        rs.updateRow();
+                    }
+                }while (rs.next());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void pushStats() {
+    public void pushStats() throws IOException, SQLException {
+        String row;
+        BufferedReader csvReader = new BufferedReader(new FileReader("estadistiques.csv"));
+        while ((row = csvReader.readLine()) != null) {
+            String[] data = row.split(",");
+            // do something with the data
+
+            System.out.println("INSERT INTO match_statistics VALUES ('"+data[0]+"','"+data[1]+"','"+data[2]+"','"+data[3]+"','"+data[4]+"','"+data[5]+"','"+data[6]+"','"+data[7]+"','"+data[8]+"','"+data[9]+"','"+data[10]+"','"+data[11]+"','"+data[12]+"','"+data[13]+"','"+data[14]+"','"+data[15]+"','"+data[16]+"','"+data[17]+"','"+data[18]+"','"+data[19]+"','"+data[20]+"','"+data[21]+"')");
+
+
+
+            ResultSet rs = null;
+            Statement st = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
+
+            //TODO: CONSULTA
+            rs = st.executeQuery("SELECT * FROM player WHERE home_team ='"+data[0]+"' AND ...................... ");
+
+            Statement statement = null;
+            statement = conn.createStatement();
+            statement.executeUpdate("INSERT INTO match_statistics VALUES ('"+data[0]+"','"+data[1]+"','"+data[2]+"','"+data[3]+"','"+data[4]+"','"+data[5]+"','"+data[6]+"','"+data[7]+"','"+data[8]+"','"+data[9]+"','"+data[10]+"','"+data[11]+"','"+data[12]+"','"+data[13]+"','"+data[14]+"','"+data[15]+"','"+data[16]+"','"+data[17]+"','"+data[18]+"','"+data[19]+"','"+data[20]+"','"+data[21]+"')");
+            statement.close();
+
+        }
+        csvReader.close();
     }
 
     public void exit() throws SQLException {
