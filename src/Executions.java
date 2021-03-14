@@ -235,12 +235,20 @@ public class Executions {
             Statement st = conn.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 
             //TODO: CONSULTA
-            rs = st.executeQuery("SELECT * FROM player WHERE home_team ='"+data[0]+"' AND ...................... ");
+            rs = st.executeQuery("SELECT * FROM match_statistics WHERE home_team ='"+data[0]+"' AND visitor_team='"+data[1]+"' AND match_date='"+data[2]+"'");
 
-            Statement statement = null;
-            statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO match_statistics VALUES ('"+data[0]+"','"+data[1]+"','"+data[2]+"','"+data[3]+"','"+data[4]+"','"+data[5]+"','"+data[6]+"','"+data[7]+"','"+data[8]+"','"+data[9]+"','"+data[10]+"','"+data[11]+"','"+data[12]+"','"+data[13]+"','"+data[14]+"','"+data[15]+"','"+data[16]+"','"+data[17]+"','"+data[18]+"','"+data[19]+"','"+data[20]+"','"+data[21]+"')");
-            statement.close();
+            if (rs.wasNull()){
+                Statement statement = null;
+                statement = conn.createStatement();
+                statement.executeUpdate("INSERT INTO match_statistics VALUES ('"+data[0]+"','"+data[1]+"','"+data[2]+"','"+data[3]+"','"+data[4]+"','"+data[5]+"','"+data[6]+"','"+data[7]+"','"+data[8]+"','"+data[9]+"','"+data[10]+"','"+data[11]+"','"+data[12]+"','"+data[13]+"','"+data[14]+"','"+data[15]+"','"+data[16]+"','"+data[17]+"','"+data[18]+"','"+data[19]+"','"+data[20]+"','"+data[21]+"')");
+                statement.close();
+            }else {
+                Statement statement = null;
+                statement = conn.createStatement();
+                statement.executeUpdate("UPDATE match_statistics SET home_team = '"+data[0]+"', visitor_team = '"+data[1]+"', match_date = '"+data[2]+"', player = '"+data[3]+"', minutes_played = '"+data[4]+"', points = '"+data[5]+"', offensive_rebounds = '"+data[6]+"', defensive_rebounds = '"+data[7]+"', assists = '"+data[8]+"', comitted_fouls = '"+data[9]+"', recived_fouls = '"+data[10]+"', recived_fouls = '"+data[11]+"', free_throw_attempts  = '"+data[12]+"', free_throw_made = '"+data[13]+"', two_point_attempts = '"+data[14]+"', two_point_made'"+data[15]+"', three_point_attempts = '"+data[16]+"', three_point_made = '"+data[17]+"', blocks = '"+data[18]+"', blocks_against = '"+data[19]+"', steals = '"+data[20]+"', turnovers = '"+data[21]+"') WHERE home_team ='"+data[0]+"' AND visitor_team='"+data[1]+"' AND match_date='"+data[2]+"'");
+                statement.close();
+            }
+
 
         }
         csvReader.close();
